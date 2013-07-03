@@ -225,6 +225,20 @@ class OverloadedFunction(collections.Callable):
             func = self._functions[len(args)].find(types)
             self._function_cache[types] = func
             return func(*args)
+    
+    def __get__(self, instance, owner):
+        if instance is None:
+            return self
+        return BoundOverloadedFunction(self, instance)
+
+
+class BoundOverloadedFunction(collections.Callable):
+    def __init__(self, overloaded_func, instance):
+        self._func = overloaded_func
+        self._instance = instance
+    
+    def __call__(self, *args):
+        return self._func(self._instance, *args)
 
 
 _overloaded_functions = {} # {'module': {'function_name': OverloadedFunction, ...}, ...}

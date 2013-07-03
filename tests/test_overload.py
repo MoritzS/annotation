@@ -60,6 +60,22 @@ class TestOverloaded(unittest.TestCase):
         
         self.assertRaises(AmbiguousFunction, foo.add_function, other_foo)
 
+    def test_methods(self):
+        class Foo(object):
+            @overloaded
+            def foo(self, a:int):
+                return 'int'
+            
+            @overloaded
+            def foo(self, a:str):
+                return 'str'
+        
+        f = Foo()
+        
+        self.assertEqual(f.foo(1), 'int')
+        self.assertEqual(f.foo(''), 'str')
+        self.assertRaises(FunctionNotFound, f.foo)
+
 
 if __name__ == '__main__':
     unittest.main()
